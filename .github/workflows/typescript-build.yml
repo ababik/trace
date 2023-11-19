@@ -16,13 +16,13 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 20
 
-    #   - name: Install Dependencies
-    #     run: npm install
+      - name: Install Dependencies
+        run: npm install
 
       - name: Compile TypeScript
-        run: npx tsc
+        run: tsc
 
       - name: Copy viewer
         run: cp -r viewer dist
