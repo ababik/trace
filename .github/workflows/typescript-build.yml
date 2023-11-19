@@ -18,8 +18,11 @@ jobs:
         with:
           node-version: 16
 
-      - name: Install Dependencies
-        run: npm install
+    #   - name: Install Dependencies
+    #     run: npm install
 
       - name: Compile TypeScript
-        run: tsc
+        run: npx tsc
+
+      - name: Copy viewer
+        run: cp -r viewer dist
