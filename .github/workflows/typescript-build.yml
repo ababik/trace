@@ -12,9 +12,6 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
-        with:
-            ref: gh-pages
-            persist-credentials: false
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -29,9 +26,3 @@ jobs:
 
       - name: Copy viewer
         run: cp -r viewer dist
-
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: dist
