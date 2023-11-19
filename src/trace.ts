@@ -1,4 +1,4 @@
-const REPORT_WINDOW_URL = "http://127.0.0.1:8085/viewer/viewer.html"
+const REPORT_WINDOW_URL = "https://ababik.github.io/trace/viewer/viewer.html"
 
 type TraceOptions = {
     skip?: number
