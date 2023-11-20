@@ -81,4 +81,4 @@ window.addEventListener("message", (event: MessageEvent<ReportRecord[]>) => {
     generate(event.data)
 })
 
-window.dispatchEvent(new CustomEvent("ready"))
+window.opener.postMessage("ready")
