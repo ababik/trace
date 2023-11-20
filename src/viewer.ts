@@ -78,6 +78,7 @@ function toggle(row: HTMLElement, expand = false) {
 }
 
 window.addEventListener("message", (event: MessageEvent<ReportRecord[]>) => {
-    console.log(event.data)
     generate(event.data)
 })
+
+window.dispatchEvent(new CustomEvent("ready"))

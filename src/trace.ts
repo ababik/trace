@@ -70,7 +70,7 @@ class Trace {
 
     private showReportWindow(records: ReportRecord[]) {
         let reportWindow = window.open(REPORT_WINDOW_URL, "_blank")
-        reportWindow.addEventListener("load", () => {
+        reportWindow.addEventListener("ready", () => {
             reportWindow.postMessage(records)
         })
     }
