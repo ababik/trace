@@ -1,24 +1,5 @@
 const REPORT_WINDOW_URL = "https://ababik.github.io/trace/viewer.html"
 
-type TraceOptions = {
-    skip?: number
-    take?: number
-}
-
-type ReportRecord = {
-    label: string
-    child: number
-    count: number
-    total: number
-    percent: number
-    first: number
-    max: number
-    min: number
-    mean: number
-    stddev: number
-    inner: ReportRecord[]
-}
-
 class Trace {
     private root: Context = null
     private current: Context = null
@@ -64,14 +45,19 @@ class Trace {
             }
         }
         walk(this.root, records)
-        console.log(records)
-        this.showReportWindow(records)
+        let report: ReportSummary = {
+            timestamp: Date.now(),
+            grandTotal: this.grandTotal,
+            records: records
+        }
+        console.log("trace", report)
+        this.showReportWindow(report)
     }
 
-    private showReportWindow(records: ReportRecord[]) {
+    private showReportWindow(report: ReportSummary) {
         let reportWindow = window.open(REPORT_WINDOW_URL, "_blank")
         window.addEventListener("message", () => {
-            reportWindow.postMessage(records)
+            reportWindow.postMessage(report, "*")
         })
     }
 }
@@ -133,4 +119,4 @@ class Context {
     }
 }
 
-window['trace'] = new Trace()
+window["trace"] = new Trace()

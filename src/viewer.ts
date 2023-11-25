@@ -1,4 +1,6 @@
-function generate(records: ReportRecord[]) {
+function generate(report: ReportSummary) {
+    let { records, timestamp, grandTotal } = report
+    setTitle(timestamp, grandTotal)
     let table = document.querySelector(".table-body")
     function appendCell(row: HTMLElement, value: string) {
         let cell = document.createElement("div")
@@ -77,8 +79,16 @@ function toggle(row: HTMLElement, expand = false) {
     }
 }
 
-window.addEventListener("message", (event: MessageEvent<ReportRecord[]>) => {
+function setTitle(timestamp: number, grandTotal: number) {
+    let date = new Date(timestamp)
+    let hours = date.getHours().toString().padStart(2, "0")
+    let minutes = date.getMinutes().toString().padStart(2, "0")
+    let seconds = date.getSeconds().toString().padStart(2, "0")
+    window.document.title = `${hours}:${minutes}:${seconds} - ${grandTotal}ms`;
+}
+
+window.addEventListener("message", (event: MessageEvent<ReportSummary>) => {
     generate(event.data)
 })
 
-window.opener.postMessage("ready")
+window.opener.postMessage("ready", "*")
