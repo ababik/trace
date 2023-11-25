@@ -103,13 +103,13 @@ class Context {
         let child = this.inner.size
         let count = this.deltas.length
         let total = this.deltas.reduce((a, b) => (a + b), 0)
-        let percent = total / grandTotal * 100
-        let mean = total / count
+        let percent = grandTotal ? (total / grandTotal * 100) : 0
+        let mean = count ? (total / count) : 0
         let first = count ? this.deltas[0] : 0
         let max = Math.max(...this.deltas)
         let min = Math.min(...this.deltas)
         let squaredDifferences = this.deltas.map(value => Math.pow(value - mean, 2))
-        let meanSquaredDifferences = squaredDifferences.reduce((a, b) => (a + b), 0) / count
+        let meanSquaredDifferences = count ? (squaredDifferences.reduce((a, b) => (a + b), 0) / count) : 0
         let stddev = Math.sqrt(meanSquaredDifferences)
         return {
             label: this.label,
