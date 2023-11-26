@@ -33,8 +33,9 @@ class Trace {
         if (this.current != this.root) {
             throw new Error(`Trace "${this.current.label}" is still active.`)
         }
-        let grandTotal = 0;
-        for (let contex of this.root.inner.values()) {
+        let grandTotal = 0
+        let firstLevelContexts = this.root.inner.values()
+        for (let contex of firstLevelContexts) {
             grandTotal += contex.deltas.reduce((a, b) => (a + b), 0)
         }
         let records: ReportRecord[] = []

@@ -84,7 +84,7 @@ function setTitle(timestamp: number, grandTotal: number) {
     let hours = date.getHours().toString().padStart(2, "0")
     let minutes = date.getMinutes().toString().padStart(2, "0")
     let seconds = date.getSeconds().toString().padStart(2, "0")
-    window.document.title = `${hours}:${minutes}:${seconds} - ${grandTotal}ms`;
+    window.document.title = `${hours}:${minutes}:${seconds} - ${Math.round(grandTotal)}ms`;
 }
 
 window.addEventListener("message", (event: MessageEvent<ReportSummary>) => {
