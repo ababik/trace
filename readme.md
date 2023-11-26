@@ -13,13 +13,11 @@ trace.off("my function 1")
 Benchmarking can be structured as a nested hierarchy of `on`/`off` calls.
 ```
 trace.on("my function 1")
-    trace.on("inner function")
+    trace.on("inner function", { skip: 10, take: 100 })
     // your code
     trace.off("inner function")
 trace.off("my function 1")
 ```
-
-Ensure that each `on(label)` method has a corresponding closing `off(label)` method with a matching label.  
 
 To generate an execution report, call the `report` method from the code or dev tools console.  
 This will open a popup window with an expandable table representing the call hierarchy and benchmarks. 
