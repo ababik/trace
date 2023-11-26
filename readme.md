@@ -1,9 +1,9 @@
 # Structural JavaScript Profiler
 
 `trace` is a JavaScript library for measuring code execution time.  
-It provides a simple way to benchmark a code, allowing to measure the performance of individual functions and nested calls.  
+It provides a simple way to benchmark code, allowing measurement of the performance of individual functions and nested calls. 
 
-Wrap the code to benchmark with `on(label)` and `off(label)` functions.
+Wrap the code to benchmark with the `on(label)` and `off(label)` functions.
 ```
 trace.on("my function 1")
 // your code
@@ -19,7 +19,10 @@ trace.on("my function 1")
 trace.off("my function 1")
 ```
 
-Each `on(label)` method must have corresponding closing `off(label)` method with matching label.  
+Ensure that each `on(label)` method has a corresponding closing `off(label)` method with a matching label.  
 
-Call `report` method from the code or console to generate an execution report.  
-It will open a popup window with an expandable table representing the call hierarchy and benchmarks.  
+To generate an execution report, call the `report` method from the code or dev tools console.  
+This will open a popup window with an expandable table representing the call hierarchy and benchmarks.  
+
+Report example
+![Report example](./public/example.gif)
