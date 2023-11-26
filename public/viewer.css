@@ -46,7 +46,7 @@ body {
 }
 
 .table-row > div:first-child > div {
-    padding-left: calc(10px + var(--level) * 10px);
+    padding-left: calc(10px + var(--level) * 20px);
 }
 
 .table-cell {
@@ -72,3 +72,14 @@ body {
 [data-level="7"] { --level: 7; }
 [data-level="8"] { --level: 8; }
 [data-level="9"] { --level: 9; }
+[data-level="10"] { --level: 10; }
+[data-level="11"] { --level: 11; }
+[data-level="12"] { --level: 12; }
+[data-level="13"] { --level: 13; }
+[data-level="14"] { --level: 14; }
+[data-level="15"] { --level: 15; }
+[data-level="16"] { --level: 16; }
+[data-level="17"] { --level: 17; }
+[data-level="18"] { --level: 18; }
+[data-level="19"] { --level: 19; }
+[data-level="20"] { --level: 20; }
