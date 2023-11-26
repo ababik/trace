@@ -1,5 +1,7 @@
 # Structural JavaScript Profiler
 
+See about [structural and sampling](https://www.igvita.com/slides/2012/structural-and-sampling-javascript-profiling-in-chrome.pdf) JavaScript profiling.  
+
 `trace` is a JavaScript library for measuring code execution time.  
 It provides a simple way to benchmark code, allowing measurement of the performance of individual functions and nested calls. 
 
