@@ -3,7 +3,6 @@ const REPORT_WINDOW_URL = "https://ababik.github.io/trace/viewer.html"
 class Trace {
     private root: Context = null
     private current: Context = null
-    private grandTotal: number = 0
 
     constructor() {
         this.root = new Context(null, null)
@@ -26,16 +25,18 @@ class Trace {
         if (this.current.label != label) {
             throw new Error(`Unexpected trace label "${label}" (expected "${this.current.label}").`)
         }
-        let context = this.current
-        this.grandTotal += context.off()
-        this.current = context.parent
+        this.current.off()
+        this.current = this.current.parent
     }
 
     report() {
         if (this.current != this.root) {
             throw new Error(`Trace "${this.current.label}" is still active.`)
         }
-        let grandTotal = this.grandTotal
+        let grandTotal = 0;
+        for (let contex of this.root.inner.values()) {
+            grandTotal += contex.deltas.reduce((a, b) => (a + b), 0)
+        }
         let records: ReportRecord[] = []
         function walk(current: Context, records: ReportRecord[]) {
             for (let context of current.inner.values()) {
@@ -47,7 +48,7 @@ class Trace {
         walk(this.root, records)
         let report: ReportSummary = {
             timestamp: Date.now(),
-            grandTotal: this.grandTotal,
+            grandTotal: grandTotal,
             records: records
         }
         console.log("trace", report)
