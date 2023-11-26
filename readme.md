@@ -22,7 +22,12 @@ trace.off("my function 1")
 Ensure that each `on(label)` method has a corresponding closing `off(label)` method with a matching label.  
 
 To generate an execution report, call the `report` method from the code or dev tools console.  
-This will open a popup window with an expandable table representing the call hierarchy and benchmarks.  
+This will open a popup window with an expandable table representing the call hierarchy and benchmarks. 
 
-Report example
+### Install
+```
+<script src="https://ababik.github.io/trace/trace.js"></script>
+```
+
+### Report Example
 ![Report example](./public/example.gif)
