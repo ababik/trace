@@ -19,13 +19,14 @@ trace.on("my function 1")
 trace.off("my function 1")
 ```
 
-To generate an execution report, call the `report` method from the code or dev tools console.  
+To generate an execution report, call the `trace.report()` method from the code or dev tools console.  
 This will open a popup window with an expandable table representing the call hierarchy and benchmarks. 
 
 ### Install
 ```
 <script src="https://ababik.github.io/trace/trace.js"></script>
 ```
+`trace` objest is available as a global variable.
 
 ### Report Example
 ![Report example](./public/example.gif)
