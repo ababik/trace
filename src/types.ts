@@ -5,20 +5,19 @@ type TraceOptions = {
 
 type ReportSummary = {
     timestamp: number
-    grandTotal: number
+    total: number
     records: ReportRecord[]
 }
 
 type ReportRecord = {
     label: string
-    child: number
-    count: number
-    total: number
+    calls: number
+    duration: number
     percent: number
     first: number
     max: number
     min: number
     mean: number
     stddev: number
-    inner: ReportRecord[]
+    records: ReportRecord[]
 }

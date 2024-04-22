@@ -10,14 +10,14 @@ class Trace {
     }
 
     on(label: string, options?: TraceOptions) {
-        let context = this.current.inner.get(label)
-        if (!context) {
+        let context = this.current.slaves.get(label)
+        if (context === undefined) {
             context = new Context(label, this.current)
-            this.current.inner.set(label, context)
+            this.current.slaves.set(label, context)
         }
         this.current = context
-        let skip = options?.skip || null
-        let take = options?.take || null
+        const skip = options?.skip || null
+        const take = options?.take || null
         context.on(skip, take)
     }
 
@@ -26,38 +26,45 @@ class Trace {
             throw new Error(`Unexpected trace label "${label}" (expected "${this.current.label}").`)
         }
         this.current.off()
-        this.current = this.current.parent
+        this.current = this.current.master
     }
 
     report() {
         if (this.current != this.root) {
             throw new Error(`Trace "${this.current.label}" is still active.`)
         }
-        let grandTotal = 0
-        let firstLevelContexts = this.root.inner.values()
-        for (let contex of firstLevelContexts) {
-            grandTotal += contex.deltas.reduce((a, b) => (a + b), 0)
-        }
-        let records: ReportRecord[] = []
+        const total = [...this.root.slaves.values()]
+            .map(context => context.duration)
+            .reduce((d1, d2) => (d1 + d2), 0)
         function walk(current: Context, records: ReportRecord[]) {
-            for (let context of current.inner.values()) {
-                let calc = context.calc(grandTotal)
-                records.push(calc)
-                walk(context, calc.inner)
+            for (const context of current.slaves.values()) {
+                const percent = total ? (context.duration / total * 100) : 0
+                const record: ReportRecord = {
+                    label: context.label,
+                    calls: context.calls,
+                    duration: context.duration,
+                    first: context.first,
+                    max: context.max,
+                    min: context.min,
+                    mean: context.mean,
+                    stddev: context.stddev,
+                    percent: percent,
+                    records: []
+                }
+                records.push(record)
+                walk(context, record.records)
             }
         }
+        const records: ReportRecord[] = []
         walk(this.root, records)
-        let report: ReportSummary = {
-            timestamp: Date.now(),
-            grandTotal: grandTotal,
-            records: records
-        }
+        const timestamp = Date.now()
+        const report: ReportSummary = { timestamp, total, records }
         console.log("trace", report)
         this.showReportWindow(report)
     }
 
     private showReportWindow(report: ReportSummary) {
-        let reportWindow = window.open(REPORT_WINDOW_URL, "_blank")
+        const reportWindow = window.open(REPORT_WINDOW_URL, "_blank")
         window.addEventListener("message", () => {
             reportWindow.postMessage(report, "*")
         })
@@ -67,56 +74,53 @@ class Trace {
 class Context {
     label: string = null
 
+    iterations: number = 0
+    calls: number = 0
     start: number = 0
-    count: number = 0
-    deltas: number[] = []
+    duration: number = 0
+    mean: number = 0
+    sumsq: number = 0
+    stddev: number = 0
+    first: number = 0
+    max: number = 0
+    min: number = 0
 
-    parent: Context = null
-    inner: Map<string, Context> = new Map()
+    master: Context = null
+    slaves: Map<string, Context> = new Map()
 
-    constructor(label: string, parent: Context) {
+    constructor(label: string, master: Context) {
         this.label = label
-        this.parent = parent
+        this.master = master
     }
 
     on(skip: number, take: number) {
         this.start = 0
-        this.count++
-        let ignoreSkip = (skip != null) && (this.count <= skip)
-        let ignoreTake = (take != null) && (this.deltas.length >= take)
-        if (ignoreSkip || ignoreTake) {
-            return
-        }
+        this.iterations++
+        const ignoreSkip = (skip !== null) && (this.iterations <= skip)
+        const ignoreTake = (take !== null) && (this.calls >= take)
+        if (ignoreSkip || ignoreTake) return
+        this.calls++
         this.start = performance.now()
     }
 
     off() {
-        let end = performance.now()
-        if (this.start == 0) {
-            return
-        }
-        let delta = end - this.start
-        this.deltas.push(delta)
+        const end = performance.now()
+        if (this.start === 0) return
         this.start = 0
-        return delta
-    }
-
-    calc(grandTotal: number): ReportRecord {
-        let child = this.inner.size
-        let count = this.deltas.length
-        let total = this.deltas.reduce((a, b) => (a + b), 0)
-        let percent = grandTotal ? (total / grandTotal * 100) : 0
-        let mean = count ? (total / count) : 0
-        let first = count ? this.deltas[0] : 0
-        let max = Math.max(...this.deltas)
-        let min = Math.min(...this.deltas)
-        let squaredDifferences = this.deltas.map(value => Math.pow(value - mean, 2))
-        let meanSquaredDifferences = count ? (squaredDifferences.reduce((a, b) => (a + b), 0) / count) : 0
-        let stddev = Math.sqrt(meanSquaredDifferences)
-        return {
-            label: this.label,
-            child, count, total, percent, first, max, min, mean, stddev,
-            inner: []
+        const duration = end - this.start
+        this.duration += duration
+        const mean = this.mean
+        this.mean += (duration - this.mean) / this.calls
+        this.sumsq += (duration - mean) * (duration - this.mean)
+        const variance = this.calls > 1 ? this.sumsq / (this.calls - 1) : 0
+        this.stddev = Math.sqrt(variance)
+        if (this.first === 0) this.first = duration
+        if (this.calls === 1) {
+            this.min = duration
+            this.max = duration
+        } else {
+            if (duration > this.max) this.max = duration
+            if (duration < this.min) this.min = duration
         }
     }
 }
