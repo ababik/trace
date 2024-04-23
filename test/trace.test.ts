@@ -111,14 +111,14 @@ test("nested calls", () => {
 
     const trace = new Trace()
     trace.on("block1")
-        trace.on("sub-block1")
-        trace.off("sub-block1")
-        trace.on("sub-block1")
-        trace.off("sub-block1")
-        trace.on("sub-block1")
-        trace.off("sub-block1")
-        trace.on("sub-block2")
-        trace.off("sub-block2")
+    trace.on("sub-block1")
+    trace.off("sub-block1")
+    trace.on("sub-block1")
+    trace.off("sub-block1")
+    trace.on("sub-block1")
+    trace.off("sub-block1")
+    trace.on("sub-block2")
+    trace.off("sub-block2")
     trace.off("block1")
     trace.on("block2")
     trace.off("block2")
@@ -194,4 +194,122 @@ test("unexpected report call", () => {
     trace.on("block1")
     expect(() => trace.report())
         .toThrow("Trace \"block1\" is still active.")
+})
+
+test("skip", () => {
+    jest.spyOn(performance, "now")
+        // skip
+        .mockImplementationOnce(() => 1)
+        // skip
+        .mockImplementationOnce(() => 1)
+        // take the rest
+        .mockImplementationOnce(() => 1)
+        .mockImplementationOnce(() => 11)
+        .mockImplementationOnce(() => 1)
+        .mockImplementationOnce(() => 21)
+        .mockImplementationOnce(() => 1)
+        .mockImplementationOnce(() => 31)
+
+    const trace = new Trace()
+    for (let i = 0; i < 5; i++) {
+        trace.on("block1", { skip: 2 })
+        trace.off("block1")
+    }
+    const report = trace.report()
+
+    expect(report).toEqual({
+        timestamp: expect.any(Number),
+        total: 60,
+        records: [
+            {
+                label: "block1",
+                calls: 3,
+                duration: 60,
+                first: 10,
+                max: 30,
+                min: 10,
+                mean: 20,
+                stddev: 8.16496580927726,
+                percent: 100,
+                records: []
+            }
+        ]
+    })
+})
+
+test("take", () => {
+    jest.spyOn(performance, "now")
+        .mockImplementationOnce(() => 1)
+        .mockImplementationOnce(() => 11)
+        .mockImplementationOnce(() => 1)
+        .mockImplementationOnce(() => 21)
+        .mockImplementationOnce(() => 1)
+        .mockImplementationOnce(() => 31)
+
+    const trace = new Trace()
+    for (let i = 0; i < 10; i++) {
+        trace.on("block1", { take: 3 })
+        trace.off("block1")
+    }
+    const report = trace.report()
+
+    expect(report).toEqual({
+        timestamp: expect.any(Number),
+        total: 60,
+        records: [
+            {
+                label: "block1",
+                calls: 3,
+                duration: 60,
+                first: 10,
+                max: 30,
+                min: 10,
+                mean: 20,
+                stddev: 8.16496580927726,
+                percent: 100,
+                records: []
+            }
+        ]
+    })
+})
+
+test("skip and take", () => {
+    jest.spyOn(performance, "now")
+        // skip
+        .mockImplementationOnce(() => 1)
+        // skip
+        .mockImplementationOnce(() => 1)
+        // take the rest
+        .mockImplementationOnce(() => 1)
+        .mockImplementationOnce(() => 11)
+        .mockImplementationOnce(() => 1)
+        .mockImplementationOnce(() => 21)
+        .mockImplementationOnce(() => 1)
+        .mockImplementationOnce(() => 31)
+
+    const trace = new Trace()
+    for (let i = 0; i < 10; i++) {
+        trace.on("block1", { skip: 2, take: 3 })
+        trace.off("block1")
+    }
+    const report = trace.report()
+
+    expect(report).toEqual({
+        timestamp: expect.any(Number),
+        total: 60,
+        records: [
+            {
+                label: "block1",
+                calls: 3,
+                duration: 60,
+                first: 10,
+                max: 30,
+                min: 10,
+                mean: 20,
+                stddev: 8.16496580927726,
+                percent: 100,
+                records: []
+            }
+        ]
+    })
 })
