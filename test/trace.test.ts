@@ -43,7 +43,7 @@ test("single call", () => {
     })
 })
 
-test("two calls", () => {
+test("multiple calls", () => {
     jest.spyOn(performance, "now")
         .mockImplementationOnce(() => 10)
         .mockImplementationOnce(() => 20)
