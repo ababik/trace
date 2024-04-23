@@ -29,7 +29,7 @@ export class Trace {
     }
 
     report() {
-        if (this.current != this.root) {
+        if (this.current !== this.root) {
             throw new Error(`Trace "${this.current.label}" is still active.`)
         }
         const total = [...this.root.slaves.values()]

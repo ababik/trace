@@ -67,7 +67,7 @@ function toggle(row: HTMLElement, expand = false) {
             break
         }
         if (expand) {
-            if (nextLevel == level + 1) {
+            if (nextLevel === level + 1) {
                 next.classList.remove("hidden")
                 if (!next.classList.contains("collapsed")) {
                     toggle(next, true)
