@@ -2,17 +2,20 @@
     "name": "trace",
     "version": "1.0.0",
     "repository": {
-      "type": "git",
-      "url": "git+https://github.com/ababik/trace.git"
+        "type": "git",
+        "url": "git+https://github.com/ababik/trace.git"
     },
     "author": "ababik",
     "license": "TBD",
     "bugs": {
-      "url": "https://github.com/ababik/trace/issues"
+        "url": "https://github.com/ababik/trace/issues"
     },
     "homepage": "https://github.com/ababik/trace#readme",
     "devDependencies": {
-      "typescript": "*"
+        "@types/jest": "^29.5.12",
+        "jest": "^29.7.0",
+        "jest-environment-jsdom": "^29.7.0",
+        "ts-jest": "^29.1.2",
+        "typescript": "*"
     }
-  }
-  
+}

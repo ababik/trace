@@ -1,6 +1,5 @@
 const REPORT_WINDOW_URL = "https://ababik.github.io/trace/viewer.html"
-
-class Trace {
+export class Trace {
     private root: Context = null
     private current: Context = null
 
@@ -61,6 +60,7 @@ class Trace {
         const report: ReportSummary = { timestamp, total, records }
         console.log("trace", report)
         this.showReportWindow(report)
+        return report
     }
 
     private showReportWindow(report: ReportSummary) {
@@ -71,7 +71,7 @@ class Trace {
     }
 }
 
-class Context {
+export class Context {
     label: string = null
 
     iterations: number = 0
@@ -106,13 +106,12 @@ class Context {
     off() {
         const end = performance.now()
         if (this.start === 0) return
-        this.start = 0
         const duration = end - this.start
+        this.start = 0
         this.duration += duration
-        const mean = this.mean
-        this.mean += (duration - this.mean) / this.calls
-        this.sumsq += (duration - mean) * (duration - this.mean)
-        const variance = this.calls > 1 ? this.sumsq / (this.calls - 1) : 0
+        this.mean = this.duration / this.calls
+        this.sumsq += duration * duration
+        const variance = (this.sumsq - (this.duration * this.duration / this.calls)) / this.calls
         this.stddev = Math.sqrt(variance)
         if (this.first === 0) this.first = duration
         if (this.calls === 1) {

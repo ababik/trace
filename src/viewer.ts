@@ -1,16 +1,16 @@
 function generate(report: ReportSummary) {
-    let { records, timestamp, total } = report
+    const { records, timestamp, total } = report
     setTitle(timestamp, total)
-    let table = document.querySelector(".table-body")
+    const table = document.querySelector(".table-body")
     function appendCell(row: HTMLElement, value: string) {
-        let cell = document.createElement("div")
+        const cell = document.createElement("div")
         cell.classList.add("table-cell")
         cell.innerText = value
         row.appendChild(cell)
     }
     function walk(records: ReportRecord[], level: number) {
-        for (let record of records) {
-            let row = document.createElement("div")
+        for (const record of records) {
+            const row = document.createElement("div")
             table.appendChild(row)
 
             row.dataset["level"] = level.toString()
@@ -24,9 +24,9 @@ function generate(report: ReportSummary) {
                 row.classList.add("hidden")
             }
 
-            let cellLabel = document.createElement("div")
+            const cellLabel = document.createElement("div")
             cellLabel.classList.add("table-cell")
-            let cellLabelInner = document.createElement("div")
+            const cellLabelInner = document.createElement("div")
             let label = record.label
             if (record.records.length !== 0) {
                 label += ` (${record.records.length})`
@@ -55,14 +55,14 @@ function toggle(row: HTMLElement, expand = false) {
         expand = row.classList.contains("collapsed")
         row.classList.toggle("collapsed")
     }
-    let level = +row.dataset["level"]
+    const level = +row.dataset["level"]
     let next = row
     while (true) {
         next = next.nextElementSibling as HTMLElement
         if (!next) {
             break
         }
-        let nextLevel = +next.dataset.level
+        const nextLevel = +next.dataset.level
         if (nextLevel <= level) {
             break
         }
@@ -80,11 +80,11 @@ function toggle(row: HTMLElement, expand = false) {
 }
 
 function setTitle(timestamp: number, total: number) {
-    let date = new Date(timestamp)
-    let hours = date.getHours().toString().padStart(2, "0")
-    let minutes = date.getMinutes().toString().padStart(2, "0")
-    let seconds = date.getSeconds().toString().padStart(2, "0")
-    window.document.title = `${hours}:${minutes}:${seconds} - ${Math.round(total)}ms`;
+    const date = new Date(timestamp)
+    const hours = date.getHours().toString().padStart(2, "0")
+    const minutes = date.getMinutes().toString().padStart(2, "0")
+    const seconds = date.getSeconds().toString().padStart(2, "0")
+    window.document.title = `${hours}:${minutes}:${seconds} - ${Math.round(total)}ms`
 }
 
 window.addEventListener("message", (event: MessageEvent<ReportSummary>) => {
